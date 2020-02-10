@@ -1,0 +1,100 @@
+(define list (lambda (l) (cons l ())))
+(define head (lambda (()) () ((x . xs)) x))
+(define tail (lambda (()) () ((x . xs)) xs))
+
+(define fst (lambda (l) (head l)))
+(define snd (lambda (l) (head (tail l))))
+(define thd (lambda (l) (head (tail (tail l)))))
+
+(define append (lambda (() bs) bs ((a . as) bs) (cons a (append as bs))))
+(define reverse (lambda (()) () ((x . xs)) (append (reverse xs) (cons x ()))))
+
+(define even (lambda (()) () ((x . xs)) (cons x (even (tail xs)))))
+(define uneven (lambda (()) () (l) (even (tail l))))
+(define zip (lambda
+              (() ()) ()
+              ((a . as) (b . bs))
+              (append (cons a (cons b ())) (zip as bs))))
+
+(define sublisti (lambda
+                   ; case with an index match
+                   (i ()) ()
+                   (i (a.as)) (if (<= i 0) (cons a as) (sublist (- i 1) as))))
+
+(define sublist (lambda
+                  ; case with an element match
+                  (x ()) ()
+                  (x (a . as)) (if (equals a x) (cons a as) (sublist x as))))
+
+(define pick (lambda (x ()) ()
+               (x (a.ab)) (if (equals a x)
+                              (cons a (pick x ab))
+                            (pick x ab))))
+
+(define filter (lambda (f ()) ()
+                 (f (a.ab)) (if (f a)
+                                (cons a (filter f ab))
+                              (filter f ab))))
+
+(define remove (lambda (f ()) ()
+                 (f (a.ab)) (if (f a)
+                                (remove f ab)
+                              (cons a (remove f ab)))))
+
+(define fold (lambda
+               (f acc ()) acc
+               (f acc (x.xs)) (fold f (f acc x) xs)))
+
+(define foldback (lambda
+                   (f () acc) acc
+                   (f (x.xs) acc) (f (foldback f xs acc) x)))
+
+(define or (lambda (p q) (if p true q)))
+(define and (lambda (p q) (if (not p) false q)))
+
+(define forall (lambda (f l) (fold f true l)))
+
+(define contains (lambda
+                   (x ()) false
+                   (x (a.as)) (or (equals a x) (contains x as))))
+
+(define map (lambda
+              (f ()) ()
+              (f (a.as)) (cons (f a) (map f as))))
+
+(define sum (lambda (l) (fold (lambda (a b) (+ a b)) 0 l)))
+
+(define count (lambda (()) 0 ((a.as)) (+ 1 (count as))))
+
+(define iotak (lambda (n k) (if (< k n) (cons k (iotak n (+ k 1))) ())))
+(define iota (lambda (n) (iotak n 0)))
+
+(define init (lambda (size f) (map f (iota size))))
+
+(define item (lambda (i ()) () (i (a.as)) (if (= i 0) a (item (- i 1) as))))
+
+(define iter (lambda
+               (f ()) ()
+               (f (a.as)) (if (equals (f a) ()) (iter f as) ())))
+
+(define test (lambda (a b) (message "%i = %i -> %b" a b (equals a b))))
+(define testlists (lambda (x y) (message "%l = %l -> %b" x y (equals x y))))
+
+
+(define merge (lambda
+                (() ()) ()
+                ((x.xs) ()) (cons x (merge xs ()))
+                (() (y.ys)) (cons y (merge ys ()))
+                ((x.xs) (y.ys)) (if (< x y) (cons x (merge xs (cons y ys)))
+                                            (cons y (merge (cons x xs) ys)))))
+
+(define split (lambda
+                (() xs ys) (cons xs (list ys))
+                ((l.()) xs ys) (cons (cons l xs) (list ys))
+                ((l.(ls.lss)) xs ys) (split lss (cons l xs) (cons ls ys))))
+
+(define sort (lambda
+               (()) ()
+               ((lst.())) (list lst)
+               (lst) (let ab (split lst () ()) in (merge (sort (head ab)) (sort (head (tail ab)))))))
+
