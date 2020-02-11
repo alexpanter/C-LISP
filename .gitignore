@@ -4,3 +4,6 @@ clisp
 hashTable/hashTable.exe
 hashTable/hashTable
 regex/regex_test
+GPATH
+GRTAGS
+GTAGS

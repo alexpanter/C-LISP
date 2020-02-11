@@ -122,6 +122,7 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
     case OPERATOR_MULTIPLY:
     case OPERATOR_DIVIDE:
     case OPERATOR_MODULUS:
+    case OPERATOR_POWER:
       printf("! operator "); operatorPrint(operator);
       printf(" cannot be applied to strings\n");
       throwException();
@@ -156,6 +157,14 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
         return NULL;
       }
       return sexpCreateInteger(num1->value.integer % num2->value.integer);
+    case OPERATOR_POWER:
+      if(num1->value.integer == 0 && num2->value.integer < 0) {
+        printf("! the power of 0 is undefined for a negative exponent\n");
+        throwException();
+        return NULL;
+      }
+      return sexpCreateInteger((int)pow((double)num1->value.integer,
+                                        (double)num2->value.integer));
     default:
       printf("apply arithmetic operator: invalid operator type\n");
       throwException();
@@ -176,6 +185,13 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
       return sexpCreateDouble(num1->value.doubleFP / num2->value.doubleFP);
     case OPERATOR_MODULUS:
       return sexpCreateDouble(fmod(num1->value.doubleFP, num2->value.doubleFP));
+    case OPERATOR_POWER:
+      if(num1->value.doubleFP == 0.0 && num2->value.doubleFP < 0.0) {
+        printf("! the power of 0 is undefined for a negative exponent\n");
+        throwException();
+        return NULL;
+      }
+      return sexpCreateDouble(pow(num1->value.doubleFP, num2->value.doubleFP));
     default:
       printf("apply arithmetic operator: invalid operator type\n");
       throwException();
@@ -197,6 +213,14 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
       return sexpCreateDouble(arg1 / num2->value.doubleFP);
     case OPERATOR_MODULUS:
       return sexpCreateDouble(fmod(arg1, num2->value.doubleFP));
+    case OPERATOR_POWER:
+      if(num1->value.integer == 0 && num2->value.doubleFP < 0.0) {
+        printf("! the power of 0 is undefined for a negative exponent\n");
+        throwException();
+        return NULL;
+      }
+      return sexpCreateDouble(pow((double)num1->value.integer,
+                                  num2->value.doubleFP));
     default:
       printf("apply arithmetic operator: invalid operator type\n");
       throwException();
@@ -218,6 +242,14 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
       return sexpCreateDouble(num1->value.doubleFP / arg2);
     case OPERATOR_MODULUS:
       return sexpCreateDouble(fmod(num1->value.doubleFP, arg2));
+    case OPERATOR_POWER:
+      if(num1->value.doubleFP == 0.0 && num2->value.integer < 0) {
+        printf("! the power of 0 is undefined for a negative exponent\n");
+        throwException();
+        return NULL;
+      }
+      return sexpCreateDouble(pow(num1->value.doubleFP,
+                                  (double)num2->value.integer));
     default:
       printf("apply arithmetic operator: invalid operator type\n");
       throwException();
@@ -256,6 +288,7 @@ Sexp applyOperator(Sexp num1, Sexp num2, Operator operator)
   case OPERATOR_MULTIPLY:
   case OPERATOR_DIVIDE:
   case OPERATOR_MODULUS:
+  case OPERATOR_POWER:
     return applyArithmeticOperator(num1, num2, operator);
 
   default:

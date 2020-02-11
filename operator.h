@@ -14,7 +14,8 @@ enum _operator_t {
   OPERATOR_MINUS,
   OPERATOR_MULTIPLY,
   OPERATOR_DIVIDE,
-  OPERATOR_MODULUS
+  OPERATOR_MODULUS,
+  OPERATOR_POWER
 };
 
 
@@ -39,6 +40,7 @@ void operatorPrint(Operator operator)
   case OPERATOR_MULTIPLY:      printf("*");  break;
   case OPERATOR_DIVIDE:        printf("/");  break;
   case OPERATOR_MODULUS:       printf("%%"); break;
+  case OPERATOR_POWER:         printf("**"); break;
   default:
     printf("operator print: invalid operator type\n");
     break;

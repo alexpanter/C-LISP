@@ -534,6 +534,11 @@ LexTokenList transformBufferToTokenList(char* buffer)
       i++;
       continue;
     }
+    if(buffer[i] == '*' && i < len - 1 && buffer[i + 1] == '*') {
+      lexTokenListAdd(list, lexTokenCreateOperator(OPERATOR_POWER));
+      i++;
+      continue;
+    }
     if(buffer[i] == '*') {
       lexTokenListAdd(list, lexTokenCreateOperator(OPERATOR_MULTIPLY));
       continue;
