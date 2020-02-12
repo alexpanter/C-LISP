@@ -158,6 +158,11 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
       }
       return sexpCreateInteger(num1->value.integer % num2->value.integer);
     case OPERATOR_POWER:
+      if(num1->value.integer == 0 && num2->value.integer == 0) {
+        printf("! 0 raised to the power of 0 is undefined\n");
+        throwException();
+        return NULL;
+      }
       if(num1->value.integer == 0 && num2->value.integer < 0) {
         printf("! the power of 0 is undefined for a negative exponent\n");
         throwException();
@@ -186,6 +191,11 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
     case OPERATOR_MODULUS:
       return sexpCreateDouble(fmod(num1->value.doubleFP, num2->value.doubleFP));
     case OPERATOR_POWER:
+      if(num1->value.doubleFP == 0 && num2->value.doubleFP == 0) {
+        printf("! 0 raised to the power of 0 is undefined\n");
+        throwException();
+        return NULL;
+      }
       if(num1->value.doubleFP == 0.0 && num2->value.doubleFP < 0.0) {
         printf("! the power of 0 is undefined for a negative exponent\n");
         throwException();
@@ -214,6 +224,11 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
     case OPERATOR_MODULUS:
       return sexpCreateDouble(fmod(arg1, num2->value.doubleFP));
     case OPERATOR_POWER:
+      if(num1->value.integer == 0 && num2->value.doubleFP == 0) {
+        printf("! 0 raised to the power of 0 is undefined\n");
+        throwException();
+        return NULL;
+      }
       if(num1->value.integer == 0 && num2->value.doubleFP < 0.0) {
         printf("! the power of 0 is undefined for a negative exponent\n");
         throwException();
@@ -243,6 +258,11 @@ Sexp applyArithmeticOperator(Sexp num1, Sexp num2, Operator operator)
     case OPERATOR_MODULUS:
       return sexpCreateDouble(fmod(num1->value.doubleFP, arg2));
     case OPERATOR_POWER:
+      if(num1->value.doubleFP == 0 && num2->value.integer == 0) {
+        printf("! 0 raised to the power of 0 is undefined\n");
+        throwException();
+        return NULL;
+      }
       if(num1->value.doubleFP == 0.0 && num2->value.integer < 0) {
         printf("! the power of 0 is undefined for a negative exponent\n");
         throwException();
