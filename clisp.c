@@ -8,6 +8,36 @@
 #include "symtable.h"
 #include "exception.h"
 
+/* C-Lisp REPL help */
+void printHelp()
+{
+  printf("C-Lisp version 0.1 -- a free lisp interpreter.\n");
+  printf("Published under the GNU General Public License.\n");
+  printf("Join the community at https://github.com/alexpanter/C-Lisp\n\n");
+
+  printf("Interpreter options:\n");
+
+  printf("  %-20s", "--debug-lexing");
+  printf("Print lexing output\n");
+
+  printf("  %-20s", "--debug-syntree");
+  printf("Print syntax tree produced from lexing output\n");
+
+  printf("  %-20s", "--debug-symtable");
+  printf("Print symbol table (global bindings) after input execution\n");
+
+  printf("  %-20s", "--debug-input");
+  printf("Print user input\n");
+
+  printf("  %-20s", "--debug-time");
+  printf("Print execution time\n");
+
+  printf("  %-20s", "--debug-all");
+  printf("Enable all interpreter options (verbose output!)\n");
+}
+
+
+
 /* global symtable */
 extern Symtable globalEnvironment;
 
@@ -23,6 +53,10 @@ extern jmp_buf jumpbuffer;
 
 /* timer */
 struct timespec begin, end;
+/* gather average time for benchmarks */
+double timeSum = 0.0;
+int timeCount = 0;
+
 
 /* REPL-loop */
 void repl()
@@ -52,6 +86,13 @@ void repl()
     if(!strcmp(input, "#help")) {
       printf("#exit     -> exit LISP repl\n");
       printf("#bindings -> show global bindings\n");
+      inputBufferFree(input);
+      continue;
+    }
+    if(!strcmp(input, "#avgtime")) {
+      printf("average: %g ms.\n", timeSum / (double)timeCount);
+      timeSum = 0.0;
+      timeCount = 0;
       inputBufferFree(input);
       continue;
     }
@@ -111,6 +152,8 @@ void repl()
       clock_gettime(CLOCK_MONOTONIC, &end);
       double elapsed = (end.tv_sec - begin.tv_sec) * 1000.0
           + (end.tv_nsec - begin.tv_nsec) * 1E-6;
+      timeSum += elapsed;
+      timeCount++;
       printf("execution in %g ms.\n", elapsed);
     }
 
@@ -128,28 +171,27 @@ void repl()
 }
 
 
+
 int main(int argc, char** argv)
 {
   globalEnvironment = symtableCreate();
 
   for(int i = 1; i < argc; i++) {
-    if(!strcmp(argv[i],      "--debug-lexing"))   { debugLexing   = 1; }
-    else if(!strcmp(argv[i], "--debug-syntree"))  { debugSyntree  = 1; }
+    if(!strcmp(argv[i], "--help")) { printHelp(); goto END_REPL; } // ok, exit.
+    else if(!strcmp(argv[i], "--debug-lexing"  )) { debugLexing   = 1; }
+    else if(!strcmp(argv[i], "--debug-syntree" )) { debugSyntree  = 1; }
     else if(!strcmp(argv[i], "--debug-symtable")) { debugSymtable = 1; }
-    else if(!strcmp(argv[i], "--debug-input"))    { debugInput    = 1; }
-    else if(!strcmp(argv[i], "--debug-time"))     { debugTime     = 1; }
-    else if(!strcmp(argv[i], "--debug-all")) {
-      debugLexing = 1;
-      debugSyntree = 1;
-      debugSymtable = 1;
-      debugInput = 1;
-      debugTime = 1;
+    else if(!strcmp(argv[i], "--debug-input"   )) { debugInput    = 1; }
+    else if(!strcmp(argv[i], "--debug-time"    )) { debugTime     = 1; }
+    else if(!strcmp(argv[i], "--debug-all"     )) {
+      debugLexing = debugSyntree = debugSymtable = debugInput = debugTime = 1;
     }
     else { printf("Invalid argument '%s'", argv[i]); }
   }
-  printf("PLD C-LISP v. 1.0\n");
+  printf("PLD C-LISP v. 0.1\n");
   repl();
 
+ END_REPL:
   symtableFree(globalEnvironment);
-  return 0;
+  return EXIT_SUCCESS;
 }

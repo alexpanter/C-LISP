@@ -49,6 +49,10 @@
                    (f () acc) acc
                    (f (x.xs) acc) (f (foldback f xs acc) x)))
 
+(define escan (lambda
+(f () acc) (cons acc ())
+(f (x.xs) acc) (cons (f acc x) (escan xs (f acc x)))))
+
 (define or (lambda (p q) (if p true q)))
 (define and (lambda (p q) (if (not p) false q)))
 

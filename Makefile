@@ -1,7 +1,10 @@
 
+MAIN_FILE=clisp.c
+MAIN_FILE_EXE=clisp
 
-clisp: testSexp.c
-	gcc $< -o $@ -Werror -pedantic -O2 -lm
+
+build: $(MAIN_FILE)
+	gcc $< -o $(MAIN_FILE_EXE) -Werror -pedantic -O2 -lm
 
 clean:
-	rm -f clisp
+	rm -f $(MAIN_FILE_EXE)
