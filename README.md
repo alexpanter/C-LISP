@@ -2,7 +2,7 @@
 Interpreter for a LISP language, written in C.
 
 Began as an assignment during the course Programming Language Design (PLD)
-at the University of Copenhagen under the guidance of Prof. Torben Ægidius Mogensen.
+at the University of Copenhagen under the guidance of lector Torben Ægidius Mogensen.
 
 Was later extended with more advanced features such as:
 - booleans, integers, and floats
